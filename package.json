@@ -1,0 +1,28 @@
+{
+  "name": "custom-browser",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000c\u0000u\u0000s\u0000t\u0000o\u0000m\u0000-\u0000b\u0000r\u0000o\u0000w\u0000s\u0000e\u0000r\u0000\r\u0000 \u0000",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loeaf/custom-browser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loeaf/custom-browser/issues"
+  },
+  "homepage": "https://github.com/loeaf/custom-browser#readme",
+  "dependencies": {
+    "pdfkit": "^0.13.0",
+    "pdfmerge": "^1.0.2"
+  },
+  "devDependencies": {
+    "electron": "^13.6.9",
+    "electron-builder": "^24.4.0"
+  }
+}
