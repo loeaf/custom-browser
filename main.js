@@ -4,6 +4,7 @@ const path = require('path')
 const PDFDocument = require('pdfkit');
 const PDFMerge = require('pdfmerge');
 const {createWriteStream, unlinkSync} = require("fs");
+const fs = require("fs");
 
 let win;
 
@@ -52,7 +53,19 @@ ipcMain.on('refresh', (event, arg)=> {
   win.reload();
 })
 
-
+ipcMain.on('screen-shot', async (event, filePath, format)=> {
+  const capture = await win.capturePage();
+  let buffer;
+  if (format == 'png') {
+    buffer = capture.toPNG();
+  } else if (format == 'jpg') {
+    buffer = capture.toJPEG();
+  } else {
+    return false;
+  }
+  fs.writeFile(filePath, buffer, () => { });
+  return true;
+});
 
 function createPDFsAndMerge() {
   // 첫 번째 PDF 문서 생성
