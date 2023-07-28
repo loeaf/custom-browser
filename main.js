@@ -1,10 +1,11 @@
-const { app, BrowserWindow, ipcMain, globalShortcut  } = require('electron')
+const { app, BrowserWindow, ipcMain, globalShortcut, dialog  } = require('electron')
 // include the Node.js 'path' module at the top of your file
 const path = require('path')
 const PDFDocument = require('pdfkit');
 const PDFMerge = require('pdfmerge');
 const {createWriteStream, unlinkSync} = require("fs");
 const fs = require("fs");
+const moment = require('moment');
 
 let win;
 
@@ -15,9 +16,11 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, // 컨텍스트 격리 활성화
       enableRemoteModule: false, // 원격 모듈 비활성화
+      nativeWindowOpen: true,
     }
   })
   win.webContents.openDevTools()
@@ -96,3 +99,50 @@ function createPDFsAndMerge() {
       console.error('Failed to merge PDFs:', error);
     });
 }
+ipcMain.handle('openFolderDialog', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+    properties: ['openDirectory']
+  });
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
+});
+ipcMain.handle('openFileDialog', async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+    properties: ['openFile']
+  });
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
+});
+ipcMain.handle('appScreenshot', async (event, filePath, format)=> {
+  const capture = await win.capturePage();
+  let buffer;
+  if (format == 'png') {
+    buffer = capture.toPNG();
+  } else if (format == 'jpg') {
+    buffer = capture.toJPEG();
+  } else {
+    return false;
+  }
+  fs.writeFile(filePath, buffer, () => { });
+  return true;
+});
+ipcMain.handle('appPdf', async (event, filePath, format)=> {
+  console.log(win.webContents);
+  const capture = await win.capturePage();
+  let buffer;
+  if (format == 'png') {
+    buffer = capture.toPNG();
+  } else if (format == 'jpg') {
+    buffer = capture.toJPEG();
+  } else {
+    return false;
+  }
+  fs.writeFile(filePath, buffer, () => { });
+  return true;
+});

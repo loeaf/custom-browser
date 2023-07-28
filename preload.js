@@ -1,5 +1,5 @@
-const { contextBridge, ipcRenderer } = require('electron');
-
+const { contextBridge, ipcRenderer, IpcInterface } = require('electron');
+const html2pdf = require('html2pdf.js');
 // 렌더러 프로세스에서 사용할 API 정의
 // use window.electron.doThing() in renderer process
 contextBridge.exposeInMainWorld(
@@ -47,6 +47,19 @@ contextBridge.exposeInMainWorld(
         }
       }
       return addresses;
+    },
+    appScreenshot: async (filePath, format) => await ipcRenderer.invoke('appScreenshot', filePath, format),
+    openFolderDialog: () => ipcRenderer.invoke('openFolderDialog'),
+    openFileDialog: () => ipcRenderer.invoke('openFileDialog'),
+    appPdf: async (filePath, format) => {
+      console.log(document.getElementById('bodyEle'));
+      html2pdf().from(document.getElementById('bodyEle')).set({
+        margin:       1,
+        filename:     filePath + 'myfile.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }).save();
     },
   }
 )
