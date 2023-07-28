@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/loeaf/custom-browser#readme",
   "dependencies": {
+    "html2pdf.js": "^0.10.1",
     "pdfkit": "^0.13.0",
     "pdfmerge": "^1.0.2"
   },
